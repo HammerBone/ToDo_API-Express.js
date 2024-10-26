@@ -12,7 +12,7 @@ const verifyToken = (req, res, next) => {
     const { authorization } = req.headers
 
     if (!authorization) {
-        res.json({ message: "Unauthorized" })
+        res.status(401).json({ message: "Unauthorized" })
     }
 
     try {
@@ -24,7 +24,6 @@ const verifyToken = (req, res, next) => {
     catch (error) {
         res.status(500).json({ message: error.message })
     }
-    
 }
 
 const register = async (req, res) => {
