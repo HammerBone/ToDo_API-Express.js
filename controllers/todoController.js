@@ -1,30 +1,25 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('user')
+const Todo = require("../models/todoModel")
 
 const addTodo = async (req, res) => {
     const { title, description } = req.body
 
     try {
-        const todoId = await User.findOne({_id: req.user}, {_id: 0, 'todoList.id': 1}).sort({x: 1})
-        let id = 0
-        if (!todoId.todoList[0]) {
-            id = 1
-        }
-        else {
-            id = todoId.todoList[0].id + 1
+        const userId = req.user
+        const todoId = await Todo.find({}, {_id: 0, id: 1}).sort({x: 1})
+
+        let id = 1
+        if (todoId[0] != null) {
+            id = todoId[0].id + 1
         }
 
-        const createTodo = await User.findByIdAndUpdate(req.user, 
-            {
-                $push: {
-                    todoList: { 
-                        id: id,
-                        title: title, 
-                        description: description, 
-                        date: new Date()
-                    }
-                }
-            })
+        const createTodo = await Todo.create({
+            id: id,
+            title: title,
+            description: description,
+            userId: userId
+        })
 
         res.json({ 
             id: id,
