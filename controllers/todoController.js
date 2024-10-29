@@ -4,9 +4,16 @@ const Todo = require("../models/todoModel")
 
 const getAllTodo = async (req, res) => {
     try {
+        const { page, limit } = req.query
         const todoList = await Todo.find()
+        const todoListTotal = todoList.length
 
-        res.status(200).json({ todoList })
+        const startIndex = (page - 1) * limit
+        const endIndex = page * limit
+
+        const result = todoList.slice(startIndex, endIndex)
+
+        res.status(200).json({ data: result, page: page, limit: limit, total: todoListTotal })
     } 
     catch (error) {
         res.status(500).json({ message: error.message })
